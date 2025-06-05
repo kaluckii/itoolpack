@@ -138,18 +138,21 @@ class I18N:
             raise KeyError(f"No keyboard defined for key '{key}' in language '{lang}'.")
 
         for pair in model.keyboard.keys:
-            if len(pair) > 2:
+            if not len(pair) == 2:
                 raise ValueError("Key pair length should be strictly 2 string objects.")
 
             for i, value in enumerate(pair):
                 if not isinstance(value, str):
                     raise ValueError("Each keyboard value must be a string.")
 
-                match = pattern.search(value)
+                def replacer(match: re.Match) -> str:
+                    var_name = match.group(1)
+                    env_value = os.getenv(var_name)
 
-                if match:
-                    variable = match.group(1)
-                    pair[i] = pattern.sub(os.getenv(variable), value)
+                    return env_value
+
+                pair[i] = pattern.sub(replacer, value)
+
 
 
         return build_keyboard(model.keyboard.keys, model.keyboard.rows or 2)
