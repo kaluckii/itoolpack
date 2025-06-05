@@ -30,12 +30,8 @@ class I18N:
 
     _payloads: dict[str, dict[str, Any]] = {}
 
-    def __init__(
-        self,
-        fallback: str,
-        locales: Path = Path(__file__).parent.parent / "locales",
-    ):
-        self.locales = locales
+    def __init__(self, current: str, fallback: str):
+        self.locales = Path(current).parent.parent / "locales"
         self.fallback = fallback
 
         if not self.locales.exists():
