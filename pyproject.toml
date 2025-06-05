@@ -1,0 +1,9 @@
+[tool.poetry]
+name = "itoolpack"
+version = "1.0.5.alpha"
+authors = ["Kaluckii"]
+
+[tool.poetry.dependencies]
+python = "^3.11"
+aiogram = "^3.20.0"
+pyyaml = "^6.0.2"
