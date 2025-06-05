@@ -2,7 +2,7 @@
 Add next dependency to `pyproject.toml`:
 ```toml
 [tool.poetry.dependencies.itoolpack]
-git = "https://gitlab.com/kaluckii-wks/itoolpack.git"
+git = "https://github.com/kaluckii/itoolpack.git"
 branch = "main"
 ```
 
