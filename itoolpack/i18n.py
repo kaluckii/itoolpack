@@ -1,3 +1,5 @@
+import os
+import re
 from pathlib import Path
 from typing import Any
 
@@ -130,8 +132,24 @@ class I18N:
         """
 
         model = self._get_model(key, lang)
+        pattern = re.compile(r"\$\{([A-Z0-9_]+)\}")
 
         if not model.keyboard:
             raise KeyError(f"No keyboard defined for key '{key}' in language '{lang}'.")
+
+        for pair in model.keyboard.keys:
+            if len(pair) > 2:
+                raise ValueError("Key pair length should be strictly 2 string objects.")
+
+            for i, value in enumerate(pair):
+                if not isinstance(value, str):
+                    raise ValueError("Each keyboard value must be a string.")
+
+                match = pattern.search(value)
+
+                if match:
+                    variable = match.group(1)
+                    pair[i] = pattern.sub(os.getenv(variable), value)
+
 
         return build_keyboard(model.keyboard.keys, model.keyboard.rows or 2)
