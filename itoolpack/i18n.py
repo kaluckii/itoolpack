@@ -15,8 +15,12 @@ class LocaleModel(BaseModel):
     :param keyboard: Optional list of (button_text, callback_or_url) tuples.
     """
 
+    class KeyboardModel(BaseModel):
+        keys: list[list[str]]
+        rows: int | None = None
+
     text: str
-    keyboard: list[list[str]] | None = None
+    keyboard: KeyboardModel | None = None
 
 
 class I18N:
@@ -24,8 +28,8 @@ class I18N:
     Internationalization helper that loads YAML files from a 'locales' directory,
     validates entries via Pydantic, and optionally builds an inline keyboard.
 
+    :param current: current file path (__file__)
     :param fallback: Language code to use when a translation key is missing.
-    :param locales: Path to the directory containing '*.yaml' translation files.
     """
 
     _payloads: dict[str, dict[str, Any]] = {}
