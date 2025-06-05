@@ -134,4 +134,4 @@ class I18N:
         if not model.keyboard:
             raise KeyError(f"No keyboard defined for key '{key}' in language '{lang}'.")
 
-        return build_keyboard(model.keyboard.keys, model.keyboard.rows)
+        return build_keyboard(model.keyboard.keys, model.keyboard.rows or 2)
