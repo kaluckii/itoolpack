@@ -45,16 +45,16 @@ def export_server_handlers(
     :param path: Glob pattern pointing to the target Python files (defaults to 'server/**/*.py').
     :return: List of discovered APIRouter instances.
     """
-    controllers = []
+    handlers = []
 
     for m in glob.iglob(path, recursive=True):
         module = importlib.import_module(escape_module(m))
 
         if hasattr(module, "handler"):
             if isinstance(module.handler, APIRouter):
-                controllers.append(module.controller)
+                handlers.append(module.handler)
 
-    return controllers
+    return handlers
 
 
 def export_tortoise_models(path: str | None = "domain/**/*/model.py") -> list[str]:
