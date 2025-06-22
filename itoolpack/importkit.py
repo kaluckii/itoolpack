@@ -51,7 +51,7 @@ def export_server_handlers(
         module = importlib.import_module(escape_module(m))
 
         if hasattr(module, "handler"):
-            if isinstance(module.controller, APIRouter):
+            if isinstance(module.handler, APIRouter):
                 controllers.append(module.controller)
 
     return controllers
