@@ -69,3 +69,17 @@ def export_tortoise_models(path: str | None = "domain/**/*/model.py") -> list[st
         models.append(escape_module(m))
 
     return models
+
+
+def export_piccolo_models(path: str = "domain/**/*/model.py") -> list[str]:
+    """
+    Imports all Piccolo models by searching recursively for `model.py` files in the
+    specified directory structure and escaping their module paths. Returns the list of models.
+    """
+
+    models = []
+
+    for m in glob.iglob(path, recursive=True):
+        models.append(escape_module(m))
+
+    return models
