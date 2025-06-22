@@ -32,17 +32,17 @@ def export_telegram_controllers(
     return modules
 
 
-def export_server_controllers(
-    path: str | None = "controllers/server/**/*.py",
+def export_server_handlers(
+    path: str | None = "server/**/*.py",
 ) -> list[APIRouter]:
     """
     Dynamically discovers and imports all Python modules matching the given glob path,
-    and collects any `controller` variables that are instances of FastAPI's `APIRouter`.
+    and collects any `handler` variables that are instances of FastAPI's `APIRouter`.
 
     This is typically used to automatically register all route controllers from a specific
-    directory structure (e.g., `controllers/server/**`) without manually importing each one.
+    directory structure (e.g., `server/**/*`) without manually importing each one.
 
-    :param path: Glob pattern pointing to the target Python files (defaults to 'controllers/server/**/*.py').
+    :param path: Glob pattern pointing to the target Python files (defaults to 'server/**/*.py').
     :return: List of discovered APIRouter instances.
     """
     controllers = []
@@ -50,7 +50,7 @@ def export_server_controllers(
     for m in glob.iglob(path, recursive=True):
         module = importlib.import_module(escape_module(m))
 
-        if hasattr(module, "controller"):
+        if hasattr(module, "handler"):
             if isinstance(module.controller, APIRouter):
                 controllers.append(module.controller)
 
