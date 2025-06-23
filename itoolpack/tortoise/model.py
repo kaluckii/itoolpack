@@ -1,5 +1,5 @@
-from tortoise import Model as __Model
-from tortoise.contrib.pydantic import pydantic_model_creator
+from model import Model as __Model
+from model.contrib.pydantic import pydantic_model_creator
 
 
 class PydanticDescriptor:
@@ -11,3 +11,4 @@ class PydanticDescriptor:
 
 class Model(__Model):
     pd = PydanticDescriptor()
+
