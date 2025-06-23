@@ -45,8 +45,8 @@ def export_server_handlers(
     :param path: Glob pattern pointing to the target Python files (defaults to 'server/**/*.py').
     :return: List of discovered APIRouter instances.
     """
-    handlers = []
 
+    handlers = []
     for m in glob.iglob(path, recursive=True):
         module = importlib.import_module(escape_module(m))
 
@@ -57,24 +57,19 @@ def export_server_handlers(
     return handlers
 
 
-def export_tortoise_models(path: str | None = "domain/**/*/model.py") -> list[str]:
+def export_tortoise_models(path: str | None = "domain/**/*/__init__.py") -> list[str]:
     """
     Imports all models by searching recursively for `model.py` files in the
     specified directory structure and escaping their module paths. Returns the
     list of models.
+
+    :param path: Glob pattern to search for model files (default is 'domain/**/*/__init__.py').
+    :return: List of model module names as strings.
     """
 
     models = ["aerich.models"]
+
     for m in glob.iglob(path, recursive=True):
         models.append(escape_module(m))
 
     return models
-
-
-def export_piccolo_apps(path: str = "domain/**/*/piccolo_app.py") -> list[str]:
-    app = []
-
-    for a in glob.iglob(path, recursive=True):
-        app.append(escape_module(a))
-
-    return app
