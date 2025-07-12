@@ -2,16 +2,14 @@ import glob
 import importlib
 
 from types import ModuleType
-
 from fastapi import APIRouter
 
 
 def escape_module(module: str) -> str:
     """
-    Converts a module path into a dotted module name by replacing directory
-    separators with dots and removing the ".py" file extension if present.
+    Convert a file path to a Python module path by replacing slashes with dots
+    and removing the '.py' extension.
     """
-
     return module.replace("\\", ".").replace("/", ".").replace(".py", "")
 
 
@@ -19,11 +17,13 @@ def export_telegram_controllers(
     path: str = "controllers/telegram/**/*.py",
 ) -> list[ModuleType]:
     """
-    Imports all controllers modules dynamically, by default from the "controllers/telegram" directory.
+    Recursively import all Python modules matching the given glob pattern.
+    Used to dynamically load Telegram controller modules.
 
-    :raises ModuleNotFoundError: If a module cannot be found during the import.
+    :param path: Glob pattern to search for controller files.
+    :return: List of imported module objects.
+    :raises ModuleNotFoundError: If a module cannot be found.
     """
-
     modules = []
 
     for m in glob.iglob(path, recursive=True):
@@ -33,40 +33,36 @@ def export_telegram_controllers(
 
 
 def export_server_routers(
-    path: str = "server/**/*.py", router_instance: str = "controller"
+    path: str = "**/server/**/*.py", router_instance: str = "controller"
 ) -> list[APIRouter]:
     """
-    Dynamically discovers and imports all Python modules matching the given glob path,
-    and collects any `controller` variables that are instances of FastAPI's `APIRouter`.
+    Recursively import all modules matching the glob path and collect APIRouter
+    instances from the specified variable name (e.g. 'controller').
 
-    This is typically used to automatically register all route controllers from a specific
-    directory structure (e.g., `server/**/*`) without manually importing each one.
-
-    :param path: Glob pattern pointing to the target Python files (defaults to 'server/**/*.py').
+    :param path: Glob pattern to search for server files.
+    :param router_instance: Variable name to look for (must be an APIRouter).
     :return: List of discovered APIRouter instances.
     """
-
     handlers = []
+
     for m in glob.iglob(path, recursive=True):
         module = importlib.import_module(escape_module(m))
+        router = getattr(module, router_instance, None)
 
-        if hasattr(module, router_instance):
-            if isinstance(module.router_instance, APIRouter):
-                handlers.append(module.handler)
+        if isinstance(router, APIRouter):
+            handlers.append(router)
 
     return handlers
 
 
-def export_tortoise_models(path: str = "domain/**/*/__init__.py") -> list[str]:
+def export_tortoise_models(path: str = "domain/**/model.py") -> list[str]:
     """
-    Imports all models by searching recursively for `model.py` files in the
-    specified directory structure and escaping their module paths. Returns the
-    list of models.
+    Discover model modules by locating 'model.py' files and converting their
+    paths to dotted module names.
 
-    :param path: Glob pattern to search for model files (default is 'domain/**/*/__init__.py').
-    :return: List of model module names as strings.
+    :param path: Glob pattern to search for model files.
+    :return: List of model module paths as strings.
     """
-
     models = ["aerich.models"]
 
     for m in glob.iglob(path, recursive=True):
