@@ -16,7 +16,7 @@ def escape_module(module: str) -> str:
 
 
 def export_telegram_controllers(
-    path: str | None = "controllers/telegram/**/*.py",
+    path: str = "controllers/telegram/**/*.py",
 ) -> list[ModuleType]:
     """
     Imports all controllers modules dynamically, by default from the "controllers/telegram" directory.
@@ -32,12 +32,12 @@ def export_telegram_controllers(
     return modules
 
 
-def export_server_handlers(
-    path: str | None = "server/**/*.py",
+def export_server_routers(
+    path: str = "server/**/*.py", router_instance: str = "controller"
 ) -> list[APIRouter]:
     """
     Dynamically discovers and imports all Python modules matching the given glob path,
-    and collects any `handler` variables that are instances of FastAPI's `APIRouter`.
+    and collects any `controller` variables that are instances of FastAPI's `APIRouter`.
 
     This is typically used to automatically register all route controllers from a specific
     directory structure (e.g., `server/**/*`) without manually importing each one.
@@ -50,14 +50,14 @@ def export_server_handlers(
     for m in glob.iglob(path, recursive=True):
         module = importlib.import_module(escape_module(m))
 
-        if hasattr(module, "handler"):
-            if isinstance(module.handler, APIRouter):
+        if hasattr(module, router_instance):
+            if isinstance(module.router_instance, APIRouter):
                 handlers.append(module.handler)
 
     return handlers
 
 
-def export_tortoise_models(path: str | None = "domain/**/*/__init__.py") -> list[str]:
+def export_tortoise_models(path: str = "domain/**/*/__init__.py") -> list[str]:
     """
     Imports all models by searching recursively for `model.py` files in the
     specified directory structure and escaping their module paths. Returns the
